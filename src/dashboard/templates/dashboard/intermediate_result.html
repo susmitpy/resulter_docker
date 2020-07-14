@@ -1,0 +1,101 @@
+{% extends "dashboard/home.html" %}
+{% load static %}
+
+{% block panel %}
+
+    <h1> Download Intermediate Result </h1>
+
+    <p> Choose Division: </p>
+    <select class= "form-control" id="division">
+      {% for division in divisions %}
+        <option value="{{division}}">{{division}}</option>
+      {% endfor %}
+
+    </select>
+
+ <div style="height:20px"> </div>
+
+ <p> Choose File Format: </p>
+    <select class="form-control" id="format">
+
+        <option value="HTML" selected> HTML </option>
+        <option value="PDF"> PDF </option>
+
+     </select>
+
+
+      <div style="height:20px"> </div>
+
+
+    <button class = "btn btn-info" type="button" onclick="generate_inter_result()"> Generate Intermediate Result </button>
+            <a href="" id="downloadLink" download></a>
+
+
+{% endblock panel%}
+
+{% block javascript %}
+
+<script type="text/javascript">
+
+
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue =   decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+var csrftoken = getCookie('csrftoken');
+function csrfSafeMethod(method) {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+$.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+    }
+});
+
+
+  function generate_inter_result(){
+    division = document.getElementById("division").value;
+    console.log(division)
+
+    ff = document.getElementById("format").value;
+
+    $.ajax({
+            type: 'POST',
+            url: "{% url 'intermediate_result' %}",
+            data: {
+              "division":division,
+              "format":ff
+            },
+            success: function (response) {
+                // on successfull updating
+                console.log("Success")
+                console.log(response)
+                var a = document.getElementById("downloadLink");
+                a.textContent = "Click to download"
+                a.href = "media/" + response["filePath"]
+
+            },
+            error: function (response) {
+                // alert the error if any error occured
+                alert(response["responseJSON"]["error"]);
+            }
+        })
+
+  }
+
+</script>
+{% endblock javascript %}

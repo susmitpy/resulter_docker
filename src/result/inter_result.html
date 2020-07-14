@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css" crossorigin="anonymous">
+
+    <style media="screen">
+    body {
+      background: #fafafa;
+      color: #333333;
+      margin-top: 5rem;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      color: #444444;
+    }
+
+    ul {
+      margin: 0;
+    }
+
+    .bg-steel {
+      background-color: #5f788a;
+    }
+
+
+    .content-section {
+      background: #ffffff;
+      padding: 10px 20px;
+      border: 1px solid #dddddd;
+      border-radius: 3px;
+      margin-bottom: 20px;
+    }
+
+    .info {
+      font-size: 12pt;
+      font-family: sans-serif;
+    }
+
+    .imp {
+    font-size: 18pt;
+    }
+
+    .result {
+      margin-top: 5px;
+      margin-bottom: 5px;
+    }
+
+    .mystyle {
+        font-size: 11pt;
+        font-family: Arial;
+        border-collapse: collapse;
+        border: 1px solid silver;
+        margin-top: 6px;
+    }
+
+    .mystyle td, th {
+        padding: 5px;
+        text-align: center;
+    }
+
+    .mystyle tr:nth-child(even) {
+        background: #f5f2f2;
+    }
+
+    .mystyle tr:hover {
+        background: silver;
+        cursor: pointer;
+    }
+    </style>
+  </head>
+  <body>
+
+      <h1> Intermediate Result </h1>
+
+      <h2> Division : {{ division }}
+
+      <div class="content-section">
+
+        <div class="row">
+            {% for result in results %}
+
+                    <div class="col-md-3">
+                        <div class = "result" style="border:1px solid; padding:6px;">
+                          <div class="info">
+                              {{ result.name }}
+
+                                {{ result.division }} -
+                                {{ result.roll|string }} &nbsp;
+                                {% if result.sports %}
+                                    SPORTS: {{ result.sports_remain_marks }}
+                                    &nbsp;
+                                {% endif %}
+                                {% if result.ld %}
+                                     LD
+                                     &nbsp;
+                                {% endif %}
+                                {{ result.marks }} &nbsp;
+
+
+                                {% if result.final_perc < 35 %}
+                                  <span style="background-color:#ed946d">
+                                      {{ result.final_perc|string }} %
+                                  </span>
+                                {% else %}
+                                  <span >
+                                    {{ result.final_perc|string }} %
+                                  </span>
+                                {% endif %}
+                             
+                          </div>
+                              {{ result.result }}
+                        </div>
+                    </div>
+
+                    {% if result.id % 2 == 1 %}
+                         </div><div class="row">
+                    {% endif %}
+
+            {% endfor %}
+        </div>
+      </div>
+
+  </body>
+</html>

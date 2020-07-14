@@ -1,0 +1,345 @@
+{% extends "management/base_template.html" %}
+{% load static %}
+
+{% block css %}
+
+  <style media="screen">
+      table {
+      border-collapse: collapse;
+      }
+
+      table, th, td {
+      border: 1px solid #a6a6a6 !important;
+      text-align: center;
+      align-self:center;
+      padding: 15px;
+      }
+
+      th {
+      background-color: #bfed91;
+      color: black;
+      border-bottom: 1px solid black !important;
+      }
+
+      tr {
+          border-bottom: 1px solid #a6a6a6 !important;
+      }
+
+      tr:hover {
+          background-color: #d7e6c8;
+      }
+
+  </style>
+
+{% endblock css %}
+{% block content %}
+
+        <div class="jumbotron">
+
+            <h4> View / Update Student Details </h4>
+
+            <table>
+
+                <tr>
+                    <th> Name </th>
+                    <td>
+                        <input class="form-control" type="text" id="name" value="{{student.name}}" disabled>
+                    </td>
+                    <td>
+                        <button class="btn btn-primary" type="button" id="edit_name" onclick="enableChange('name')"> Edit </button>
+                    </td>
+                    <td>
+                        <button class="btn btn-success" type="button" id="save_name" onclick="updateField('name')" disabled> Save </button>
+                    </td>
+                </tr>
+                <tr>
+                    <th> Division </th>
+                    <td>
+                        <select class="form-control" type="text" id="division"  disabled>
+                            {% for division in divisions %}
+                              <option value="{{division}}"
+                                {% if division == student.division %}
+                                    selected
+                                {% endif %}
+
+                              >{{division}}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td>
+                        <button class="btn btn-primary" type="button" id="edit_division" onclick="enableChange('division')"> Edit </button>
+                    </td>
+                    <td>
+                        <button class=" btn btn-success" type="button" id="save_division" onclick="updateField('division')" disabled> Save </button>
+                    </td>
+
+                </tr>
+                <tr>
+                    <th> Roll </th>
+                    <td>
+                        <input class="form-control" type="number" id="roll_num" value="{{student.roll_num}}" disabled>
+                    </td>
+                    <td>
+                        <button class="btn btn-primary" type="button" id="edit_roll_num" onclick="enableChange('roll_num')"> Edit </button>
+                    </td>
+                    <td>
+                        <button class="btn btn-success" type="button" id="save_roll_num" onclick="updateField('roll_num')" disabled=> Save </button>
+                    </td>
+                </tr>
+                <tr>
+                    <th> Identifier </th>
+                    <td>
+                        <input class="form-control" type="text" id="identifier" value="{{student.identifier}}" disabled>
+                    </td>
+                    <td>
+                        <button class="btn btn-primary" type="button" id="edit_identifier" onclick="enableChange('identifier')"> Edit </button>
+                    </td>
+                    <td>
+                        <button class="btn btn-success" type="button" id="save_identifier" onclick="updateField('identifier')" disabled> Save </button>
+                    </td>
+                </tr>
+
+             </table>
+
+             <div style="margin-top:12px"/>
+
+             <fieldset >
+                 <legend style="margin-top:12px">
+                     Subjects
+                     <button style="margin-left:15px" class="btn btn-primary" type="button" id="edit_subjects" onclick="enableChange('subjects')"> Edit </button>
+                     <button style="margin-left:15px" class="btn btn-success" type="button" id="save_subjects" onclick="updateField('subjects')" disabled> Save </button>
+                 </legend>
+
+
+             {% for subject in all_subjects %}
+
+             <label>
+                 <input class="form-control" type="checkbox" name="subject" value="{{subject}}" disabled
+
+                    {% if subject in subjects %}
+
+                    checked
+
+                    {% endif %}
+
+                 >{{subject}}
+             </label>
+             <span style="margin-right:12px;"></span>
+
+
+             {% endfor %}
+
+              </fieldset>
+              <br>
+
+              <div class="row input-group">
+                  <div class="col-md-4">
+                          SPORTS:
+                      </div>
+
+                      <div class="col-md-2"></div>
+                <div class="col-md-5">
+                    <input type="checkbox" class = "form-control"
+
+                    {% if student.sports > 0 %}
+                      checked
+                    {% endif %}
+
+                    disabled
+                    >
+                    </div>
+
+
+               </div>
+               <br>
+
+               <fieldset >
+
+
+
+
+                   <label>
+
+
+                       <button style="margin-left:15px" class="btn btn-primary" type="button" id="edit_vacant" onclick="enableChange('vacant')"> Edit </button>
+                       <button style="margin-left:15px" class="btn btn-success" type="button" id="save_vacant" onclick="updateField('vacant')" disabled> Save </button>
+
+                       <input class="form-control" type="checkbox" id="vacant"
+
+                          {% if student.vacant %}
+
+                          checked
+
+                          {% endif %}
+
+                          disabled
+
+                       > VACANT
+
+
+
+                       </label>
+
+
+
+
+
+                </fieldset>
+
+
+
+
+        </div>
+
+
+{% endblock content %}
+
+
+{% block javascript %}
+
+    <script type="text/javascript">
+
+        var checkboxes = document.getElementsByName("subject")
+
+        function enableChange(field){
+
+            $("#edit_"+field).attr("disabled",true)
+            $("#save_"+field).removeAttr("disabled");
+            $("#"+field).removeAttr("disabled");
+            if (field == "subjects"){
+                for(checkbox of checkboxes){
+                	checkbox.removeAttribute("disabled")
+                }
+            }
+        }
+
+        function updateField(field){
+
+            $("#save_"+field).attr("disabled",true)
+            $("#edit_"+field).removeAttr("disabled");
+            $("#"+field).attr("disabled",true);
+
+
+            if (field == "subjects"){
+                var checked = []
+                for(checkbox of checkboxes){
+                	checkbox.setAttribute("disabled",true)
+                    if (checkbox.checked){
+                        checked.push(checkbox.value)
+                    }
+                }
+                updateDb("subjects",checked)
+            }
+            else if (field == "vacant") {
+
+                updateDb("vacant",document.getElementById("vacant").checked)
+            }
+            else {
+                var val = document.getElementById(field).value.trim()
+                if (field=="identifier"){
+                    val = val.toUpperCase();
+                    document.getElementById("identifier").value = val;
+                }
+
+                updateDb(field,val)
+            }
+        }
+
+        function updateDb(field,newVal){
+            console.log("Updating Field: " + field + " with new value: " + newVal)
+
+            var studentId = "{{student.id}}"
+            console.log("Student ID: " + studentId);
+            $.ajax({
+                    type: 'POST',
+                    url: "{% url 'update_student_details' %}",
+                    data: {
+                      "id":studentId,
+                      "field":field,
+                      "newVal":JSON.stringify(newVal)
+                    },
+                    success: function (response) {
+                        // on successfull updating
+                        alert("Updated")
+
+
+
+
+                    },
+                    error: function (response) {
+                        // alert the error if any error occured
+                        alert(response["responseJSON"]["error"]);
+                    }
+                })
+
+        }
+
+    </script>
+
+
+    <script type="text/javascript">
+
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue =   decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    var csrftoken = getCookie('csrftoken');
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+
+    </script>
+
+    <script type="text/javascript">
+         function update_student_details(){
+             division = document.getElementById("division").value;
+             roll = document.getElementById("roll").value.trim();
+             console.log(division);
+             console.log(roll);
+
+             $.ajax({
+                     type: 'POST',
+                     url: "{% url 'update_student_details' %}",
+                     data: {
+                       "division":division,
+                       "roll":roll
+                     },
+                     success: function (response) {
+                         // on successfull updating
+                         alert("Updated")
+
+
+
+
+                     },
+                     error: function (response) {
+                         // alert the error if any error occured
+                         alert(response["responseJSON"]["error"]);
+                     }
+                 })
+
+         }
+    </script>
+
+
+
+{% endblock javascript %}

@@ -1,0 +1,42 @@
+{% extends "public/base_template.html" %}
+{% load static %}
+
+{% block css %}
+ <link rel="stylesheet" type="text/css" href="{% static 'public/public.css' %}">
+{% endblock css %}
+
+
+{% block content %}
+  <lead> By Resulter  </lead>
+  <br>
+  <div class="row">
+      <div class="col-md-6">
+        <a href="{% url 'fy_result' %}">
+          <button type="button" class="btn btn-primary">FY Result</button>
+        </a>
+      </div>
+      <!-- <div class="col-md-6">
+        <a href = "{% url 'subject_exam_division_plots' %}">
+          <button type="button" class="btn btn-primary"> Division Wise Subject - Exam Visualization </button>
+        </a>
+      </div> -->
+  </div>
+
+  <!-- <div style="height:20px"> </div>
+
+  <div class="row">
+      <div class="col-md-6">
+        <a href="{% url 'intermediate_result' %}">
+          <button type="button" class="btn btn-primary">Intermediate Results</button>
+        </a>
+      </div>
+      <div class="col-md-6">
+        <a href = "{% url 'subject_exam_division_plots' %}">
+          <button type="button" class="btn btn-primary"> Student's Performance </button>
+        </a>
+      </div>
+
+
+  </div> -->
+
+{% endblock content %}

@@ -1,0 +1,117 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css" crossorigin="anonymous">
+
+    <link rel="stylesheet" type="text/css" href="{% static 'dashboard/main.css' %}">
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css" crossorigin="anonymous">
+
+    <link rel="stylesheet" type="text/css" href="{% static 'teacher/main.css' %}">
+
+    <style>
+
+        .block {
+            padding: 20px 20px;
+            border: 1px solid;
+            text-align:center;
+            border-radius:5px;
+            font-size: 18px;
+        }
+
+        a {
+            color: #000000;
+        }
+
+    </style>
+    {% block css %}{% endblock css %}
+
+
+</head>
+<body>
+
+
+
+    <a href="{% url 'logout' %}">
+        <button class='btn btn-warning pull-right' style="margin-right:30px">
+            Logout
+        </button>
+    </a>
+
+
+
+    <main role="main" class="container">
+
+
+        <h1> Teacher's Section </h1>
+
+
+
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-md-1"></div>
+                <a href="{% url 'marksheet' %}">
+                    <div class="col-md-3 block" style="background-color:#b6d6d5">
+
+                        Marksheet Section
+
+                    </div>
+                </a>
+<div class="col-md-1"></div>
+                <a href="{% url 'GradedMarksheet' %}">
+                    <div class="col-md-3 block" style="background-color:#b6d6d5">
+
+                        PT, EVS
+
+                    </div>
+                </a>
+
+                <a href = "{% url 'sports' %}" onclick="loading()">
+                    <div class="col-md-3 block" style="background-color:#bad6b6;">
+
+                        SPORTS
+
+                    </div>
+                </a>
+                <div class="col-md-1"></div>
+
+
+            </div>
+
+            <br>
+
+
+
+
+        </div>
+        <br>
+
+        {% block panel %}{% endblock panel %}
+    </main>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js" crossorigin="anonymous"></script>
+        <script src=
+        "https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js">
+    </script>
+
+
+    {% block javascript %}
+    {% endblock javascript %}
+</body>
+</html>

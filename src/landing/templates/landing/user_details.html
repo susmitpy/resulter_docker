@@ -1,0 +1,141 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css" crossorigin="anonymous">
+
+
+
+</head>
+<body id="page-top">
+
+     <main role="main" class="container">
+         <h1> User Details </h1>
+         <div class="row">
+             <table class="table table-bordered table-striped">
+                 <tr>
+                     <th>
+                          Email
+                     </th>
+                     <td>
+                         {{ user.email }}
+                     </td>
+                 </tr>
+                 <tr>
+                     <th>
+                          First Name
+                     </th>
+                     <td>
+                         <input class = "form-control" type="text" id="fn">
+                     </td>
+                 </tr>
+                 <tr>
+                     <th>
+                          Last Name
+                     </th>
+                     <td>
+                         <input class = "form-control" type="text" id="ln">
+                     </td>
+                 </tr>
+                 <tr>
+                     <th colspan=2>
+                         <center>
+                         <button align="centre" type="button" class = "btn btn-success " onclick="enterDetails()"> Submit
+                         </center>
+                         </th>
+                 </tr>
+
+              </table>
+
+
+
+         </div>
+</main>
+
+
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js" crossorigin="anonymous"></script>
+    <script src=
+   "https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js">
+     </script>
+
+     <script type="text/javascript">
+
+     function getCookie(name) {
+         var cookieValue = null;
+         if (document.cookie && document.cookie !== '') {
+             var cookies = document.cookie.split(';');
+             for (var i = 0; i < cookies.length; i++) {
+                 var cookie = jQuery.trim(cookies[i]);
+                 // Does this cookie string begin with the name we want?
+                 if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                     cookieValue =   decodeURIComponent(cookie.substring(name.length + 1));
+                     break;
+                 }
+             }
+         }
+         return cookieValue;
+     }
+     var csrftoken = getCookie('csrftoken');
+     function csrfSafeMethod(method) {
+         // these HTTP methods do not require CSRF protection
+         return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+     }
+     $.ajaxSetup({
+         beforeSend: function(xhr, settings) {
+             if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                 xhr.setRequestHeader("X-CSRFToken", csrftoken);
+             }
+         }
+     });
+
+     </script>
+
+     <script type="text/javascript">
+         function enterDetails(){
+             var fn = document.getElementById("fn").value.trim()
+             var ln = document.getElementById("ln").value.trim()
+
+             var data = {
+                 "user": {{ user.id }},
+                 "fn":fn,
+                 "ln":ln
+             }
+
+             $.ajax({
+                     type: 'POST',
+                     url: "{% url 'UserDetails' %}",
+                     data: {
+                       "data":JSON.stringify(data)
+                     },
+                     success: function (response) {
+                         // on successfull updating
+                         location.replace("./mainpage")
+
+
+
+
+                     },
+                     error: function (response) {
+                         // alert the error if any error occured
+                         alert(response["responseJSON"]["error"]);
+                     }
+                 })
+
+
+         }
+     </script>
+
+
+</body>
+</html>

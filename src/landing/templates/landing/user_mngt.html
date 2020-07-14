@@ -1,0 +1,217 @@
+{% extends 'landing/base_template.html' %}
+{% load static %}
+
+{% block css %}
+
+  <style media="screen">
+      table {
+      border-collapse: collapse;
+      }
+
+      table, th, td {
+      border: 1px solid #a6a6a6 !important;
+      text-align: center;
+      align-self:center;
+      padding: 15px;
+      }
+
+      th {
+      background-color: #bfed91;
+      color: black;
+      border-bottom: 1px solid black !important;
+      }
+
+      tr {
+          border-bottom: 1px solid #a6a6a6 !important;
+      }
+
+      tr:hover {
+          background-color: #d7e6c8;
+      }
+
+  </style>
+
+{% endblock css %}
+
+{% block content %}
+
+
+    <table id="myTable" class="table">
+      <thead>
+          <tr>
+            <th> First Name </th>
+            <th> Last Name </th>
+            <th> Group </th>
+            <th> Email </th>
+          </tr>
+      </thead>
+      <tbody>
+      <!-- Dynamically insert -->
+      {% for row in rows %}
+      <tr id="{{row.id}}_tr">
+        <td id="{{row.id}}_fn">
+            {{row.first_name}}
+        </td>
+        <td id="{{row.id}}_ln">
+                     {{row.last_name}}
+         </td>
+        <td>
+           {{row.groups__name}}
+         </td>
+        <td>
+            {{row.email}}
+
+          </td>
+        <td>
+            <button type="button" class = "btn btn-danger" onclick="deleteEntry('{{row.id}}'); return false;" id = "{{row.id}}_del">Delete </button>
+        </td>
+      </tr>
+      {% endfor %}
+      </tbody>
+
+
+    </table>
+    <br>
+    <br>
+    <button type="button" class="btn btn-success pull-right" onclick="addEntry()"> Add Entry </button>
+
+
+{% endblock content %}
+
+{% block javascript %}
+<script type="text/javascript">
+
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue =   decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+var csrftoken = getCookie('csrftoken');
+function csrfSafeMethod(method) {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+$.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+    }
+});
+
+  function addEntry(){
+      table = $("#myTable");
+      tbody = $(table).find('tbody')[0];
+      id = $(table).find("tr").length + 1
+
+      console.log("New Entry id: " + id);
+
+      tr = `
+                <tr id = "${id}_tr">
+
+                    <td >
+
+                    </td>
+                    <td >
+
+                    </td>
+                    <td >
+                        <select class="form-control" id="${id}_group" >
+                            {% for group in groups %}
+                                <option value="{{group.name}}">{{group.name}}</option>
+                            {% endfor %}
+                        </select>
+                     </td>
+                     <td >
+                         <input class="form-control" type="email" id = "${id}_email" value="{{test}}">
+                     </td>
+                     <td>
+                         <button type="button" class = "btn btn-success" onclick='save("${id}")' id = "${id}_save">Save</button>
+                     </td>
+
+                </tr>
+             `
+       $('#myTable tr:last').after(tr);
+
+  }
+
+  function save(row_id){
+      console.log("id: " + row_id);
+      var group = document.getElementById(row_id + "_group").value;
+      var email = document.getElementById(row_id + "_email").value.toLowerCase().trim();
+
+      console.log(email);
+      console.log(group);
+
+      var data = {
+          "group" : group,
+          "email" : email
+      }
+
+      $.ajax({
+          type: "POST",
+          url: "{% url 'ManageUsers' %}",
+          data : {
+              "data":JSON.stringify(data),
+              "op" : "add"
+          },
+          success: function(response){
+              if (response["status"] == "Success"){
+                 document.getElementById(row_id+"_tr").style.backgroundColor = "#98f207";
+                 $("#"+row_id+"_save").html("Update")
+                 $("#"+row_id+"_group").attr("disabled",true)
+                 $("#"+row_id+"_email").attr("disabled",true)
+
+              } else {
+                  alert("Error while Saving")
+              }
+          },
+          error: function (response) {
+              // alert the error if any error occured
+              alert(response["responseJSON"]["error"]);
+          }
+      })
+
+
+  }
+
+
+  function deleteEntry(row_id){
+      console.log("To Delete: " + row_id)
+      $.ajax({
+              type: 'POST',
+              url: "{% url 'ManageUsers' %}",
+              data: {
+                "id":row_id,
+                "op" : "del"
+              },
+              success: function (response) {
+                  // on successfull updating
+                  console.log("deleted");
+                  if (response["status"] == "Success"){
+                       $("#"+row_id+"_tr").remove()
+                  } else {
+                      alert("Error while deleting")
+                  }
+
+
+
+              },
+              error: function (response) {
+                  // alert the error if any error occured
+                  alert(response["responseJSON"]["error"]);
+              }
+          })
+  }
+</script>
+{% endblock javascript %}

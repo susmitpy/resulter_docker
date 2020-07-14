@@ -1,0 +1,12 @@
+{% extends "teacher/home.html" %}
+{% load crispy_forms_tags %}
+
+{% block panel %}
+  <h3> Select subject and division and exam to see marksheet</h3>
+  <form method="post">
+    {% csrf_token %}
+    {{ form|crispy }}
+
+    <button class="btn btn-info" type="submit">View Mark Sheet</button>
+    </form>
+{% endblock panel %}

@@ -1,0 +1,22 @@
+{% extends "dashboard/home.html" %}
+{% load static %}
+
+{% block css %}
+      <link rel="stylesheet" type="text/css" href="{% static 'dashboard/main.css' %}">
+      <link rel="stylesheet" type="text/css" href="{% static 'dashboard/df.css' %}">
+
+{% endblock css %}
+
+{% block panel %}
+      <h1> Assessments With Notes </h1>
+
+
+      <div class="row result" style="padding:6px;">
+
+                {% autoescape off %}
+                      {{df}}
+                   {% endautoescape %}
+
+      </div>
+
+{% endblock panel %}

@@ -1,0 +1,19 @@
+.info td {
+  border: 0;
+}
+
+table {
+border-collapse: collapse;
+}
+
+table, th, td {
+border: 1px solid black;
+text-align: center;
+align-self:center;
+padding: 15px;
+}
+
+th {
+background-color: #4CAF50;
+color: white;
+}

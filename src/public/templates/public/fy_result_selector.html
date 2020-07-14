@@ -1,0 +1,85 @@
+{% extends "public/base_template.html" %}
+{% load static %}
+
+{% block content %}
+  <div class="input-group">
+    <select class= "form-control" id="division">
+      {% for division in divisions %}
+        <option value="{{division}}">{{division}}</option>
+      {% endfor %}
+
+    </select>
+
+    <input type="number" id="roll">
+
+    <button type="button" onclick="fy_result()"> Get Result </button>
+            <a href="" id="downloadLink" download></a>
+  </div>
+
+{% endblock content%}
+
+{% block javascript %}
+
+<script type="text/javascript">
+
+
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue =   decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+var csrftoken = getCookie('csrftoken');
+function csrfSafeMethod(method) {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+$.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+    }
+});
+
+
+  function fy_result(){
+    division = document.getElementById("division").value;
+    roll = document.getElementById("roll").value;
+
+
+    $.ajax({
+            type: 'POST',
+            url: "{% url 'fy_result' %}",
+            data: {
+              "division":division,
+              "roll":roll
+            },
+            success: function (response) {
+                // on successfull updating
+                console.log("Success")
+                console.log(response)
+                var a = document.getElementById("downloadLink");
+                a.textContent = "Click to download"
+                a.href = "media/" + response["filePath"]
+
+            },
+            error: function (response) {
+                // alert the error if any error occured
+                alert(response["responseJSON"]["error"]);
+            }
+        })
+
+  }
+
+</script>
+{% endblock javascript %}

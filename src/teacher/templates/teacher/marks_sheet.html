@@ -1,0 +1,338 @@
+{% extends "teacher/home.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block css %}
+
+  <style media="screen">
+      table {
+      border-collapse: collapse;
+      }
+
+      table, th, td {
+      border: 1px solid #a6a6a6 !important;
+      text-align: center;
+      align-self:center;
+      padding: 15px;
+      }
+
+      th {
+      background-color: #bfed91;
+      color: black;
+      border-bottom: 1px solid black !important;
+      }
+
+      tr {
+          border-bottom: 1px solid #a6a6a6 !important;
+      }
+
+      tr:hover {
+          background-color: #d7e6c8;
+      }
+
+  </style>
+
+{% endblock css %}
+
+{% block panel %}
+  <table >
+    <tr class="info">
+      <td><p> Division : {{division}}</p></td>
+      <td>  <p> Subject : {{subject_name}} </p></td>
+      <td><p> Exam : {{exam_name}} </p></td>
+    </tr>
+  </table>
+  <p/>
+  <form method="post" action="{% url 'upload_marksheet' %}" enctype="multipart/form-data">{% csrf_token %}
+{{ form|crispy }}
+    <input type="hidden" name="exam_id" value="{{exam_id}}">
+      <input type="submit" value="Upload Marksheet" class="btn btn-primary">
+      </form>
+
+
+        <button onclick="download_marksheet()" type="button" class="btn btn-secondary"> Generate Marksheet For Download </button>
+        <a href="" id="downloadLink" download></a>
+
+
+
+  <p></p>
+  <form id="sheet">
+    <table>
+
+
+      <tr>
+        <th> Label </th>
+        <th> Roll </th>
+        <th> Marks </th>
+        <th> Note </th>
+        <th> Update </th>
+      </tr>
+      <!-- Dynamically insert -->
+      {% for assmt in assessments %}
+      <span style="display: none;" name = "assmt" value="{{assmt.id}}"/>
+      {% if assmt.note == "" %}
+          <tr  id="{{assmt.id}}_row">
+      {% else %}
+        <tr style="background-color:#d9744c" id = "{{assmt.id}}_row">
+      {% endif %}
+
+          <td>{{assmt.identifier}}</td>
+
+        <td id = "{{assmt.id}}_roll"> {{assmt.roll}} </td>
+        <td>
+            {% if assmt.marks == None %}
+              <input clas="form-control" id="{{assmt.id}}_marks" type="text" placeholder="Marks"/>
+            {% else %}
+              <input clas="form-control" id="{{assmt.id}}_marks" type="text" value="{{assmt.marks}}" placeholder="Marks"/>
+            {% endif %}
+
+        </td>
+        <td>
+          <input clas="form-control" type="text" name="note" list="note_content" id = "{{assmt.id}}_note" value="{{assmt.note}}" placeholder="NONE">
+              <datalist id="note_content">
+                <option value="ABSENT">
+                <option value="ZERO">
+                <option value="BLANK">
+                <option value="COPY CASE">
+              </datalist>
+          <input style="display: none" disabled>
+
+
+        </td>
+        <td>
+            <button type="button" class="btn btn-success" onclick="change('{{assmt.id}}'); return false;" id="{{assmt.id}}_btn">Update</button>
+        </td>
+      </tr>
+      {% endfor %}
+
+    </table>
+        </form>
+        <br>
+        <div class="row">
+          <div class="col-md-11" >
+            <button type="button" class="btn btn-success" style="float:left;margin-left:515px;" onclick="push(); return false;" id="push"
+
+            {% if update_all_disabled %}
+                disabled
+            {% endif %}
+
+            >Update All</button>
+          </div>
+
+        </div>
+
+
+
+{% endblock panel%}
+
+{% block javascript %}
+
+<script type='text/javascript'>
+       $(document).ready(function(){
+           $('#sheet input').keydown(function(e){
+            if(e.keyCode==13 || e.keyCode == 40){
+
+               // if($(':input:eq(' + ($(':input').index(this) + 1) + ')').attr('type')=='submit'){// check for submit button and submit form on enter press
+               //  return true;
+               // }
+
+
+               if ($(':input').index(this) % 2 == 1){
+                   // Marks input.
+                   $(':input:eq(' + ($(':input').index(this) + 4) + ')').focus();
+               }
+
+
+
+              return true;
+            }
+
+           });
+
+           $("#sheet input").keyup(function(e){
+             if (e.keyCode == 38){
+
+                 if ($(':input').index(this) % 2 == 1){
+                     // Marks input.
+                     $(':input:eq(' + ($(':input').index(this) - 4) + ')').focus();
+                 }
+
+
+               return true;
+             }
+           });
+
+       });
+       </script>
+
+<script type="text/javascript">
+
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue =   decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+var csrftoken = getCookie('csrftoken');
+function csrfSafeMethod(method) {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+$.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+    }
+});
+
+  function push(){
+    console.log("Submit")
+    spans = document.getElementsByName("assmt")
+    l = spans.length
+    updated_assmts = [];
+    for (i = 0; i < l; i++) {
+      span  = spans[i]
+      attrs = span.attributes
+      valueAttr = attrs["value"]
+      id =  valueAttr.textContent
+
+      console.log(id)
+      marks = document.getElementById(id + "_marks").value.trim();
+      note = document.getElementById(id+"_note").value.trim();
+
+      if (marks == ""){
+          document.getElementById(id + "_note").value = "BLANK";
+          document.getElementById(id + "_marks").value = -1;
+
+          marks = -1;
+          note = "BLANK";
+      }
+
+      assmt = {
+        "marks":marks,
+        "note":note,
+        "id":id
+      }
+      updated_assmts.push(assmt)
+    }
+
+
+    $.ajax({
+            type: 'POST',
+            url: "{% url 'submit_assmts' %}",
+            data: {
+              "assmts":JSON.stringify(updated_assmts),
+              "division": "{{division}}",
+              "subject" : "{{subject_name}}",
+              "exam" : "{{exam_name}}"
+            },
+            success: function (response) {
+                // on successfull updating
+                console.log("done");
+                alert("Submitted !")
+
+
+
+            },
+            error: function (response) {
+                // alert the error if any error occured
+                alert(response["responseJSON"]["error"]);
+            }
+        })
+
+
+  }
+
+  function download_marksheet(){
+    spans = document.getElementsByName("assmt")
+    l = spans.length
+    download_assmts = [];
+    for (i = 0; i < l; i++) {
+      span  = spans[i]
+      attrs = span.attributes
+      valueAttr = attrs["value"]
+      id =  valueAttr.textContent
+      marks = document.getElementById(id + "_marks").value.trim();
+      roll = document.getElementById(id+"_roll").innerHTML.trim();
+      note = document.getElementById(id+"_note").value.trim();
+
+      assmt = {
+        "roll":roll,
+        "marks":marks,
+        "note":note
+      }
+      download_assmts.push(assmt)
+    }
+
+    $.ajax({
+            type: 'POST',
+            url: "{% url 'download_marksheet' %}",
+            data: {
+              "assmts":JSON.stringify(download_assmts),
+              "division":"{{division}}",
+              "exam":"{{exam_name}}",
+              "subject":"{{subject_name}}"
+            },
+            success: function (response) {
+                // on successfull updating
+                console.log("Success")
+                console.log(response)
+                var a = document.getElementById("downloadLink");
+                a.textContent = "Click to download"
+                a.href = "media/" + response["filePath"]
+
+
+
+            },
+            error: function (response) {
+                // alert the error if any error occured
+                alert(response["responseJSON"]["error"]);
+            }
+        })
+
+  }
+
+
+  function change(assmt_id){
+    console.log("id: " + assmt_id);
+    var marks = document.getElementById(assmt_id + "_marks").value.trim();
+    var note = document.getElementById(assmt_id+"_note").value.trim();
+    if (marks == ""){
+      marks=-1
+    }
+    console.log(marks)
+    console.log(note)
+    $.ajax({
+            type: 'POST',
+            url: "{% url 'update_assmt' %}",
+            data: {
+              "marks":marks,
+              "note":note,
+              "assmt_id":assmt_id
+            },
+            success: function (response) {
+                // on successfull updating
+                console.log("changed");
+                document.getElementById(assmt_id+"_row").style.backgroundColor = "#98f207";
+
+
+            },
+            error: function (response) {
+                // alert the error if any error occured
+                alert(response["responseJSON"]["error"]);
+            }
+        })
+
+  }
+</script>
+{% endblock javascript %}

@@ -1,0 +1,15 @@
+{% extends "management/base_template.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+  <form method="post">
+  {% csrf_token %}
+  {{ form|crispy }}
+  <button type="submit" class="btn btn-info">View Student Details </buttton>
+
+  </form>
+
+
+
+
+{% endblock content %}

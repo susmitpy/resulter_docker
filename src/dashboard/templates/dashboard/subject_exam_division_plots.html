@@ -1,0 +1,13 @@
+{% extends "dashboard/home.html" %}
+
+{% block panel %}
+
+  {% for d in data %}
+
+    {% autoescape off %}
+
+      {{d.plot}}
+    {% endautoescape %}
+
+  {% endfor %}
+{% endblock panel %}

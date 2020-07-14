@@ -1,0 +1,153 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css" crossorigin="anonymous">
+
+    <link rel="stylesheet" type="text/css" href="{% static 'dashboard/main.css' %}">
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css" crossorigin="anonymous">
+
+    <link rel="stylesheet" type="text/css" href="{% static 'dashboard/main.css' %}">
+
+    <style>
+
+    .block {
+        padding: 30px 30px;
+        border: 1px solid;
+        text-align:center;
+        border-radius:5px;
+        margin-left:15px;
+    }
+
+    a {
+        color: #000000;
+    }
+
+    </style>
+    {% block css %}{% endblock css %}
+
+
+
+</head>
+<body>
+
+
+
+    <a href="{% url 'logout' %}">
+        <button class='btn btn-warning pull-right' style="margin-right:30px">
+            Logout
+        </button>
+    </a>
+
+
+
+    <main role="main" class="container">
+
+
+        <h1> Dashboard </h1>
+
+
+
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-md-1"></div>
+                <a href="{% url 'assessments_with_notes' %}">
+                    <div class="col-md-3 block" style="background-color:#b6d6d5">
+
+                        Assessments with Notes
+
+                    </div>
+                </a>
+
+                <div class="col-md-1"></div>
+                <a href = "{% url 'subject_exam_division_plots' %}" onclick="loading()">
+                    <div class="col-md-3 block" style="background-color:#bad6b6; padding: 21px 21px">
+
+                        Division Wise Subject - Exam Visualization
+
+                    </div>
+                </a>
+
+                <div class="col-md-1"></div>
+                <a href="{% url 'intermediate_result' %}">
+                    <div class="col-md-3 block" style="background-color:#d2d6b6;">
+
+                        Intermediate Results
+
+                    </div>
+                </a>
+
+
+            </div>
+
+            <br>
+
+            <div class="row">
+                <div class="col-md-1"></div>
+                <a href="{% url 'assessment_log' %}">
+                    <div class="col-md-3 block" style="background-color:#b6c6d6; padding: 23px 23px;">
+
+                        Assessment Log
+
+                    </div>
+                </a>
+
+                <div class="col-md-1"></div>
+                <a href = "{% url 'student_performance' %}">
+                    <div class="col-md-3 block" style="background-color:#c1b6d6; padding: 23px 23px;">
+
+                        Student's Performance
+
+                    </div>
+                </a>
+
+                <div class="col-md-1"></div>
+                <a href="{% url 'marksheet_bulk_update_log' %}">
+                    <div class="col-md-3 block" style="background-color:#d6bdb6; padding: 23px 23px;">
+
+                        Marksheet Bulk Update Log
+
+                    </div>
+                </a>
+
+
+            </div>
+
+        </div>
+
+        {% block panel %}{% endblock panel %}
+    </main>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js" crossorigin="anonymous"></script>
+    <script src=
+    "https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js">
+    </script>
+
+    <script type="text/javascript">
+    function loading(){
+        alert("Creating Plots")
+    }
+    </script>
+
+
+
+    {% block javascript %}
+    {% endblock javascript %}
+</body>
+</html>

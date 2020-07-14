@@ -1,0 +1,103 @@
+{% extends "teacher/home.html" %}
+{% load static %}
+
+{% block panel %}
+  <h3> Select subject and division and exam to see marksheet</h3>
+  <form action="{% url 'GradedMarksheet' %}" method="post">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="division">Division</label>
+        <select class="form-control" id="division" name="division">
+            {% for division in divisions %}
+
+                <option value = "{{division}}"> {{division}} </option>
+
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="subject">Subject</label>
+        <select class="form-control" name="subject" id="subject" onchange="changeExamOptions(this)">
+
+                <option value = "EVS"> Environmental Science </option>
+                <option value = "PT"> Physical Training </option>
+
+
+
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="exam">Exam</label>
+        <select class="form-control" id="exam" name="exam">
+            <option value="seminar"> Seminar </option>
+            <option value="project"> Project </option>
+        </select>
+    </div>
+
+    <input class="btn btn-info" type="submit" value="View Marksheet"></input>
+    </form>
+{% endblock panel %}
+
+{% block javascript %}
+
+
+    <script type="text/javascript">
+
+     function changeExamOptions(selectedSubject){
+
+         if (selectedSubject.value == "PT"){
+             $("#exam").html(
+                `<option value="theory">Theory</option>
+                 <option value="practical">Practical</option>
+                `
+             )
+         } else {
+             $("#exam").html(
+                `<option value="seminar"> Seminar </option>
+                 <option value="project"> Project </option>
+                `
+             )
+         }
+     }
+
+
+    </script>
+
+
+
+    <script type="text/javascript">
+
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue =   decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    var csrftoken = getCookie('csrftoken');
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+
+    </script>
+
+
+{% endblock javascript %}

@@ -1,0 +1,198 @@
+{% extends "management/base_template.html" %}
+{% load static %}
+
+{% block css %}
+
+  <style media="screen">
+      table {
+      border-collapse: collapse;
+      }
+
+      table, th, td {
+      border: 1px solid #a6a6a6 !important;
+      text-align: center;
+      align-self:center;
+      padding: 15px;
+      }
+
+      th {
+      background-color: #bfed91;
+      color: black;
+      border-bottom: 1px solid black !important;
+      }
+
+      tr {
+          border-bottom: 1px solid #a6a6a6 !important;
+      }
+
+      tr:hover {
+          background-color: #d7e6c8;
+      }
+
+  </style>
+
+{% endblock css %}
+{% block content %}
+
+        <div class="jumbotron">
+
+            <h4> View / Update Student Details </h4>
+
+            <table>
+
+                <tr>
+                    <th> Name </th>
+                    <td>
+                        <input class="form-control" type="text" id="name">
+                    </td>
+                </tr>
+                <tr>
+                    <th> Division </th>
+                    <td>
+                        <select class="form-control" type="text" id="division">
+                            {% for division in divisions %}
+                              <option value="{{division}}">{{division}}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+
+                </tr>
+                <tr>
+                    <th> Roll </th>
+                    <td>
+                        <input class="form-control" type="number" id="roll_num">
+                    </td>
+
+                </tr>
+                <tr>
+                    <th> Identifier </th>
+                    <td>
+                        <input class="form-control" type="text" id="identifier" placeholder="LD / specify" value="">
+                    </td>
+                </tr>
+
+             </table>
+
+             <div style="margin-top:12px"/>
+
+             <fieldset >
+                 <legend style="margin-top:12px">
+                     Subjects
+
+                 </legend>
+
+
+             {% for subject in subjects %}
+
+             <label>
+                 <input class="form-control" type="checkbox" name="subject" value="{{subject}}">{{subject}}
+             </label>
+             <span style="margin-right:12px;"></span>
+
+
+             {% endfor %}
+
+              </fieldset>
+              <br>
+
+              <button type = "button" class = "btn btn-success" onclick="create_student()"> Create Student </button>
+
+        </div>
+
+{% endblock content %}
+
+{% block javascript %}
+
+    <script type="text/javascript">
+
+        var checkboxes = document.getElementsByName("subject")
+
+        function create_student(){
+
+          var info = {}
+            var checked = []
+            for(checkbox of checkboxes){
+            	checkbox.setAttribute("disabled",true)
+                if (checkbox.checked){
+                    checked.push(checkbox.value)
+                }
+            }
+
+           info["subjects"] = checked
+
+           var fields = ["name","division","roll_num"]
+
+           for (field of fields){
+               document.getElementById(field).setAttribute("disabled",true)
+               info[field] = document.getElementById(field).value.trim()
+           }
+
+            var val = document.getElementById("identifier").value.trim()
+            val = val.toUpperCase();
+            document.getElementById("identifier").value = val;
+            document.getElementById("identifier").setAttribute("disabled",true)
+            info["identifier"] = val
+
+           console.log(info)
+
+           $.ajax({
+                   type: 'POST',
+                   url: "{% url 'CreateNewStudent' %}",
+                   data: {
+                     "data":JSON.stringify(info)
+                   },
+                   success: function (response) {
+                       // on successfull updating
+                       alert("Created")
+
+
+
+
+                   },
+                   error: function (response) {
+                       // alert the error if any error occured
+                       alert(response["responseJSON"]["error"]);
+                   }
+               })
+
+
+        }
+
+
+    </script>
+
+
+    <script type="text/javascript">
+
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue =   decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    var csrftoken = getCookie('csrftoken');
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+
+    </script>
+
+
+{% endblock javascript %}

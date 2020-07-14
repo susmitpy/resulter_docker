@@ -1,0 +1,94 @@
+{% extends "dashboard/home.html" %}
+
+{% block css %}
+
+<style>
+
+body {
+  background: #fafafa;
+  color: #333333;
+  margin-top: 5rem;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #444444;
+}
+
+ul {
+  margin: 0;
+}
+
+.bg-steel {
+  background-color: #5f788a;
+}
+
+
+.content-section {
+  background: #ffffff;
+  padding: 10px 20px;
+  border: 1px solid #dddddd;
+  border-radius: 3px;
+  margin-bottom: 20px;
+}
+
+.info {
+  font-size: 12pt;
+  font-family: sans-serif;
+}
+
+.imp {
+font-size: 18pt;
+}
+
+.result {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.mystyle {
+    font-size: 11pt;
+    font-family: Arial;
+    border-collapse: collapse;
+    border: 1px solid silver;
+    margin-top: 6px;
+}
+
+.mystyle td, th {
+    padding: 5px;
+    text-align: center;
+}
+
+.mystyle tr:nth-child(even) {
+    background: #f5f2f2;
+}
+
+.mystyle tr:hover {
+    background: silver;
+    cursor: pointer;
+}
+
+</style>
+
+{% endblock css %}
+
+{% block panel %}
+<h1> Student's Performance </h1>
+
+       <div class="content-section">
+    <p>
+        Their performance is lagging in these subjects compared to their performance in other subjects.
+        <br>
+        The difference between their Average Marks and marks in mentioned subject is greater than 2
+        </p>
+
+        </div>
+
+        {% if show %}
+
+           {% autoescape off %}
+            {{ alert }}
+                {% endautoescape %}
+        {% else %}
+            <h3> All is Good ! </h3>
+        {% endif %}
+{% endblock panel %}

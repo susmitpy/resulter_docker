@@ -1,0 +1,140 @@
+{% extends "management/base_template.html" %}
+{% load static %}
+
+{% block css %}
+  <link rel="stylesheet" type="text/css" href="{% static 'management/danger_zone_css.css' %}">
+{% endblock css %}
+
+{% block content %}
+
+
+
+    <ul class="list-group">
+
+      <li class="list-group-item list-group-item-light">
+          <a class="nav-item nav-link" href="{% url 'upload_student_details' %}">Upload Student Details</a>
+      </li>
+      <li class="list-group-item list-group-item-light">
+          <a class="nav-item nav-link" href="{% url 'upload_students_subjects' %}">Allocate Subjects to Students</a>
+      </li>
+      <li class="list-group-item list-group-item-light">
+          <a class="nav-item nav-link" href="{% url 'view_student_details' %}">View Student Details</a>
+      </li>
+
+      <li class="list-group-item list-group-item-light">
+      </li>
+      <li class="list-group-item list-group-item-light">
+          <a href="{% url 'CreateNewStudent' %}">
+          <button type="button" class = "btn btn-warning"> Insert New Student </button>
+          </a>
+
+      </li>
+      <li class="list-group-item list-group-item-light">
+      </li>
+
+      <li class="list-group-item list-group-item-light" id = "ca">
+
+            <button type="button" class = "btn btn-warning" onclick="set_up_exam_assmts()" id="exam_assmt_set_up"
+            {% if exam_assmt_set_up == True %}
+                disabled
+            {% endif %}
+
+            >Set Up Exam and Assessments </button>
+
+
+      </li>
+
+    </ul>
+
+
+
+<div id="confirmBox" hidden>
+    <div class="message"></div>
+    <span class="yes">Yes</span>
+    <span class="no">No</span>
+</div>
+{% endblock content%}
+
+
+
+{% block javascript %}
+
+<script type="text/javascript">
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue =   decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+var csrftoken = getCookie('csrftoken');
+function csrfSafeMethod(method) {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+$.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+    }
+});
+
+function doConfirm(msg, yesFn, noFn)
+{
+    var confirmBox = $("#confirmBox");
+    confirmBox.find(".message").text(msg);
+    confirmBox.find(".yes,.no").unbind().click(function()
+    {
+        confirmBox.hide();
+    });
+    confirmBox.find(".yes").click(yesFn);
+    confirmBox.find(".no").click(noFn);
+    confirmBox.show();
+}
+
+  function set_up_exam_assmts(a){
+    console.log("Set Up Exam and Assmts");
+    doConfirm("Are all subjects and divisions Created ?", function yes()
+    {
+        doConfirm("Have all students data (subjects allocation) have been uploaded ? ", function yes(){
+            $.ajax({
+                    type: 'POST',
+                    url: "{% url 'set_up_exam_assmts' %}",
+                    data: {
+
+                    },
+                    success: function (response) {
+                        // on successfull updating
+                        console.log("Set Up Exam and Assessments");
+                        document.getElementById("ca").style.backgroundColor = "#98f207"
+                        $("#exam_assmt_set_up").attr("disabled",true)
+
+
+                    },
+                    error: function (response) {
+                        // alert the error if any error occured
+                        alert(response["responseJSON"]["error"]);
+                    }
+                })
+        }, function no(){})
+
+
+    }, function no()
+    {
+        // do nothing
+        console.log("creation of assessments assements");
+    });
+  }
+
+
+</script>
+{% endblock javascript %}

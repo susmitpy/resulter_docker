@@ -1,0 +1,23 @@
+{% extends "management/base_template.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+  <center>
+      <div class="jumbotron">
+          <h1 class="display-4">Students Details File Uploading</h1>
+                  {% block replace %}
+          <p class="lead">Upload the file Student Details.xlsx</p>
+          <hr class="my-4">
+          <a href="media/samples/Student Details.xlsx" id="downloadLink" download>Download Sample File</a>
+          <hr class="my-4">
+          <form method="POST" enctype="multipart/form-data">
+              <!-- Very Important csrf Token -->
+              {% csrf_token %}
+              <table>
+                  {{ form|crispy }}
+              </table>
+              <input type="submit" class="btn btn-primary btn-lg" name="register">
+      </div>
+      {% endblock replace %}
+  </center>
+
+{% endblock content %}
