@@ -16,20 +16,20 @@ services:
     container_name: dg01
     entrypoint: /entrypoint.sh
    # command: bash -c "python manage.py collectstatic --no-input"
-    depends_on:
-      - db
+    # depends_on:
+    #   - db
     volumes:
       - ./src:/src
      # - /static:/static
     expose:
       - "8000"
 
-  db:
-    image: postgres:latest
-    command: GRANT ALL ON DATABASE postgres TO postgres;
-    environment:
-       - POSTGRES_DB=postgres
-       - POSTGRES_USER=postgres
-       - POSTGRES_PASSWORD=postgres
-
-    container_name: ps01
+  # db:
+  #   image: postgres:latest
+  #   command: GRANT ALL ON DATABASE postgres TO postgres;
+  #   environment:
+  #      - POSTGRES_DB=postgres
+  #      - POSTGRES_USER=postgres
+  #      - POSTGRES_PASSWORD=postgres
+  #
+  #   container_name: ps01
