@@ -1,8 +1,9 @@
-{% extends 'landing/base_template.html' %}
+
 {% load static %}
 
 {% block css %}
     <link rel="stylesheet" href="{% static 'landing/home.css' %}">
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js" crossorigin="anonymous"></script>
 {% endblock css %}
 
 {% block content %}
@@ -40,7 +41,7 @@
                 <div class="divider-custom-line"></div>
             </div>
             <!-- Masthead Subheading-->
-            <p class="pre-wrap masthead-subheading font-weight-light mb-0">Data Driven - Backed by Django and SQL - Easy To Use - Customised
+            <p class="pre-wrap masthead-subheading font-weight-light mb-0">Data Driven - Backed by Django and SQL - Powered By Docker - Easy To Use - Customised
 We Know Your Needs </p>
         </div>
     </header>
@@ -242,7 +243,7 @@ We Know Your Needs </p>
                         <div class="row justify-content-center">
                             <div class="col-lg-8">
                                 <!-- Portfolio Modal - Title-->
-                                <h2 class="portfolio-modal-title text-secondary mb-0">Secure Authentication and Authorization</h2>
+                                <h2 class="portfolio-modal-title text-secondary mb-0">Seamless User Management</h2>
                                 <!-- Icon Divider-->
                                 <div class="divider-custom">
                                     <div class="divider-custom-line"></div>
@@ -251,7 +252,7 @@ We Know Your Needs </p>
                                 </div>
                                 <!-- Portfolio Modal - Image--><img class="img-fluid rounded mb-5" src="{% static 'landing/img/auth_auth.png' %}" alt="auth"/>
                                 <!-- Portfolio Modal - Text-->
-                                <p style="font-size:24px;" class="mb-5"> The sections are guarded by Role based Authentication and Authorization </p>
+                                <p style="font-size:24px;" class="mb-5"> Manage users easily. The sections (dashboard, teacher, management) are guarded by Role based Authorization </p>
                                 <button class="btn btn-primary" href="#" data-dismiss="modal"><i class="fas fa-times fa-fw"></i>Close Window</button>
                             </div>
                         </div>
@@ -377,11 +378,11 @@ Knowing which students are lagging where, We have got You covered.</p>
 
 {% block javascript %}
 
-   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js" crossorigin="anonymous"></script>
-   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-   <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.bundle.min.js"></script>
-   <!-- Third party plugin JS-->
-   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+<!-- Bootstrap core JS-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+<!-- Third party plugin JS-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
    <script src="{% static 'landing/home.js' %}" charset="utf-8"></script>
 
 {% endblock javascript %}

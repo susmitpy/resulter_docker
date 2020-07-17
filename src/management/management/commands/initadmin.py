@@ -11,19 +11,23 @@ class Command(BaseCommand):
 
        if not Group.objects.filter(name="admin").exists() :
            admin_group = Group.objects.create(name="admin")
+           perms_list = ["Can add subject","Can view subject", "Can add division", "Can view division", "Can delete subject", "Can delete division"]
+           permissions = Permission.objects.filter(name__in=perms_list)
+           for permission in permissions:
+               admin_group.permissions.add(permission)
+           admin_group.save()
            Group.objects.create(name="administration")
            Group.objects.create(name="faculty")
 
-       perms_list = ["Can add subject","Can view subject", "Can add division", "Can view division", "Can delete subject", "Can delete division"]
-       permissions = Permission.objects.filter(name__in=perms_list)
-       admin_group = Group.objects.get(name="admin")
-       user = User.objects.create(username="admin")
-       user.set_password("1234")
-       user.groups.add(admin_group)
-       user.is_staff = True
-       for permission in permissions:
-           user.user_permissions.add(permission)
-       user.save()
+       if not User.objects.filter(username="admin").exists():
+
+           admin_group = Group.objects.get(name="admin")
+           user = User.objects.create(username="admin")
+           user.set_password("1234")
+           user.is_staff = True
+           user.groups.add(admin_group)
+
+           user.save()
 
 
 

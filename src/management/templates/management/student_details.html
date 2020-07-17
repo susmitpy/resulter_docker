@@ -154,17 +154,9 @@
                <br>
 
                <fieldset >
-
-
-
-
-                   <label>
-
-
-                       <button style="margin-left:15px" class="btn btn-primary" type="button" id="edit_vacant" onclick="enableChange('vacant')"> Edit </button>
-                       <button style="margin-left:15px" class="btn btn-success" type="button" id="save_vacant" onclick="updateField('vacant')" disabled> Save </button>
-
-                       <input class="form-control" type="checkbox" id="vacant"
+                   <legend style="margin-top:12px">
+                       Vacant:
+                       <input style="width:30px;height:30px;margin-left:20px;margin-top:10px;" type="checkbox" id="vacant"
 
                           {% if student.vacant %}
 
@@ -174,21 +166,13 @@
 
                           disabled
 
-                       > VACANT
+                       >
+                       <button style="margin-left:15px" class="btn btn-primary" type="button" id="edit_vacant" onclick="enableChange('vacant')"> Edit </button>
+                       <button style="margin-left:15px" class="btn btn-success" type="button" id="save_vacant" onclick="updateField('vacant')" disabled> Save </button>
+                   </legend>
 
-
-
-                       </label>
-
-
-
-
-
+             
                 </fieldset>
-
-
-
-
         </div>
 
 

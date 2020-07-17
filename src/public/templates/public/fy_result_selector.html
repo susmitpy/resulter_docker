@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block content %}
-  <div class="input-group">
+    <label for="division">Division </label>
     <select class= "form-control" id="division">
       {% for division in divisions %}
         <option value="{{division}}">{{division}}</option>
@@ -10,11 +10,13 @@
 
     </select>
 
-    <input type="number" id="roll">
-
-    <button type="button" onclick="fy_result()"> Get Result </button>
+    <br>
+    <label for="roll"> Roll Number </label>
+    <input type="number" id="roll" class="form-control" required>
+    <br>
+    <button type="button" onclick="fy_result()" class = "btn btn-success"> Get Result </button>
             <a href="" id="downloadLink" download></a>
-  </div>
+
 
 {% endblock content%}
 
@@ -55,6 +57,11 @@ $.ajaxSetup({
   function fy_result(){
     division = document.getElementById("division").value;
     roll = document.getElementById("roll").value;
+
+    if (roll == ""){
+        alert("Please enter your roll number")
+        return;
+    }
 
 
     $.ajax({

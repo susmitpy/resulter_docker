@@ -34,6 +34,13 @@
             color: #000000;
         }
 
+        .section {
+            font-size:20px;
+            text-align: center;
+            align-self: center;
+            color: #333333
+        }
+
     </style>
     {% block css %}{% endblock css %}
 
@@ -43,7 +50,7 @@
 
 
 
-    <a href="{% url 'logout' %}">
+    <a href="{% url 'logout_page' %}">
         <button class='btn btn-warning pull-right' style="margin-right:30px">
             Logout
         </button>
@@ -63,29 +70,30 @@
             <div class="row">
                 <div class="col-md-1"></div>
                 <a href="{% url 'marksheet' %}">
-                    <div class="col-md-3 block" style="background-color:#b6d6d5">
-
+                    <div class="col-md-3 block" style="background-color:#dfedd5;">
+<div class="section">
                         Marksheet Section
-
-                    </div>
-                </a>
-<div class="col-md-1"></div>
-                <a href="{% url 'GradedMarksheet' %}">
-                    <div class="col-md-3 block" style="background-color:#b6d6d5">
-
-                        PT, EVS
-
-                    </div>
-                </a>
-
-                <a href = "{% url 'sports' %}" onclick="loading()">
-                    <div class="col-md-3 block" style="background-color:#bad6b6;">
-
-                        SPORTS
-
+ </div>
                     </div>
                 </a>
                 <div class="col-md-1"></div>
+                <a href="{% url 'GradedMarksheet' %}">
+                    <div class="col-md-3 block" style="background-color:#d5e8ed">
+<div class="section">
+                        PT, EVS
+ </div>
+                    </div>
+                </a>
+                <div class="col-md-1"></div>
+                <a href = "{% url 'sports' %}" onclick="loading()">
+                    <div class="col-md-3 block" style="background-color:#dbd5ed">
+                        <div class="section">
+                        SPORTS
+                         </div>
+                    </div>
+                    </div>
+                </a>
+
 
 
             </div>

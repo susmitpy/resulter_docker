@@ -81,7 +81,7 @@
         <div class="row">
             {% for result in results %}
 
-                    <div class="col-md-3">
+                    <div class="col-md-5">
                         <div class = "result" style="border:1px solid; padding:6px;">
                           <div class="info">
                               {{ result.name }}
@@ -96,9 +96,10 @@
                                      LD
                                      &nbsp;
                                 {% endif %}
+                                Marks:
                                 {{ result.marks }} &nbsp;
-
-
+                                PT Grade:
+                                {{ result.pt_grade }} &nbsp;
                                 {% if result.final_perc < 35 %}
                                   <span style="background-color:#ed946d">
                                       {{ result.final_perc|string }} %
@@ -108,11 +109,12 @@
                                     {{ result.final_perc|string }} %
                                   </span>
                                 {% endif %}
-                             
+
                           </div>
                               {{ result.result }}
                         </div>
                     </div>
+                    <div class = "col-md-2"></div>
 
                     {% if result.id % 2 == 1 %}
                          </div><div class="row">

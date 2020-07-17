@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 
 urlpatterns = [
     path("",include("landing.urls")),
@@ -8,5 +8,5 @@ urlpatterns = [
     path("public/",include("public.urls")),
     path("teacher/",include("teacher.urls")),
     path('admin/', admin.site.urls),
-    path(r'^registration/', include('django.contrib.auth.urls'))
+    re_path(r'^registration/', include('django.contrib.auth.urls'))
 ]

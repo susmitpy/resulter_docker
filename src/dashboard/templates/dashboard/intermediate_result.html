@@ -13,17 +13,6 @@
 
     </select>
 
- <div style="height:20px"> </div>
-
- <p> Choose File Format: </p>
-    <select class="form-control" id="format">
-
-        <option value="HTML" selected> HTML </option>
-        <option value="PDF"> PDF </option>
-
-     </select>
-
-
       <div style="height:20px"> </div>
 
 
@@ -71,14 +60,11 @@ $.ajaxSetup({
     division = document.getElementById("division").value;
     console.log(division)
 
-    ff = document.getElementById("format").value;
-
     $.ajax({
             type: 'POST',
             url: "{% url 'intermediate_result' %}",
             data: {
               "division":division,
-              "format":ff
             },
             success: function (response) {
                 // on successfull updating

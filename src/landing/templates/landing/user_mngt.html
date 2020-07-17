@@ -42,7 +42,7 @@
             <th> First Name </th>
             <th> Last Name </th>
             <th> Group </th>
-            <th> Email </th>
+            <th> Username / Email </th>
           </tr>
       </thead>
       <tbody>
@@ -59,7 +59,7 @@
            {{row.groups__name}}
          </td>
         <td>
-            {{row.email}}
+            {{row.username}}
 
           </td>
         <td>
@@ -71,9 +71,9 @@
 
 
     </table>
-    <br>
-    <br>
-    <button type="button" class="btn btn-success pull-right" onclick="addEntry()"> Add Entry </button>
+
+
+    <button type="button" class="btn btn-success pull-right" onclick="addEntry()" style="margin-right:40px"> Add User </button>
 
 
 {% endblock content %}
@@ -168,7 +168,7 @@ $.ajaxSetup({
           success: function(response){
               if (response["status"] == "Success"){
                  document.getElementById(row_id+"_tr").style.backgroundColor = "#98f207";
-                 $("#"+row_id+"_save").html("Update")
+                 $("#"+row_id+"_save").attr("disabled",true)
                  $("#"+row_id+"_group").attr("disabled",true)
                  $("#"+row_id+"_email").attr("disabled",true)
 

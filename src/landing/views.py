@@ -17,13 +17,35 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
 
-from django.contrib.auth.forms import PasswordResetForm
+from django.contrib.auth.forms import PasswordResetForm,UserChangeForm
+
+from .forms import EmailFieldForm
+
+def forgot_password(req):
+    if req.method == "POST":
+        form = EmailFieldForm(req.POST)
+        if form.is_valid():
+            email = form.cleaned_data["email"]
+            if User.objects.filter(email=email).exists():
+                form = PasswordResetForm({'email': email})
+                form.is_valid()
+                form.save(
+                        request= req,
+                        from_email="weareresulter@gmail.com",
+                            email_template_name='registration/html_password_forget_email.html',
+                            html_email_template_name='registration/html_password_forget_email.html')
+                messages.info(req,"Check Your Mail")
+            else:
+                messages.info(req,"User does not exists")
+    form = EmailFieldForm()
+    return render(req,"landing/forgot_password.html",{"form":form})
 
 @method_decorator(login_required(login_url="login_page"), name='dispatch')
 class UserDetails(View):
     def get(self,req):
         user = req.user
         print(user.username)
+
         return render(req,"landing/user_details.html",{"user":user})
 
     def post(self,req):
@@ -31,9 +53,16 @@ class UserDetails(View):
         user = User.objects.get(pk=data["user"])
         user.first_name = data["fn"]
         user.last_name = data["ln"]
-        user.save()
-        return redirect("/mainpage")
 
+        if user.email == data["email"]:
+            user.save()
+
+        else:
+            user.email = data["email"]
+            user.username = data["email"]
+            user.save()
+
+        return redirect("/mainpage")
 
 
 @method_decorator(login_required(login_url="login_page"), name='dispatch')
@@ -41,7 +70,7 @@ class UserDetails(View):
 class ManageUsers(View):
     def get(self,req):
         groups = Group.objects.values("name")
-        rows = User.objects.exclude(groups__name=None).values("id","email","groups__name","first_name","last_name")
+        rows = User.objects.exclude(groups__name=None).values("id","username","groups__name","first_name","last_name")
         return render(req,"landing/user_mngt.html",{"groups":groups,"rows":rows})
 
     def post(self,req):
@@ -53,9 +82,14 @@ class ManageUsers(View):
         return JsonResponse({"status":"Success"},status=200)
 
     def add_user(self,data,req):
-        user = User.objects.create(username = data["email"],email=data["email"])
+        email = data["email"]
+      #  username = email.split("@")[0]
+        user = User.objects.create(username=email,email=email)
         g = Group.objects.get(name=data["group"])
         user.groups.add(g)
+        if g=="admin":
+            user.is_staff = True
+
         user.save()
 
         form = PasswordResetForm({'email': user.email})
@@ -110,12 +144,11 @@ def login_page(req):
         pw = req.POST.get("password")
 
         user = authenticate(req,username=un,password=pw)
-
-        if user.last_login == None:
-            login(req,user)
-            return redirect("UserDetails")
-
+        print(user)
         if user is not None:
+            if user.last_login == None:
+                login(req,user)
+                return redirect("UserDetails")
             login(req,user)
             return redirect("mainpage")
         else:

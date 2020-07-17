@@ -27,6 +27,12 @@ from landing.decorators import allowed_users
 def home(req):
     return render(req,"dashboard/home.html")
 
+def get_user_full_name(email):
+    user = User.objects.filter(email=email)
+    if user.exists():
+        return user[0].get_full_name()
+    return "NA"
+
 # DB CHECK PASS
 @login_required(login_url="login")
 @allowed_users(allowed_roles=["admin","faculty"])
@@ -38,7 +44,7 @@ def marksheet_bulk_update_log(req):
         df["Timestamp"]  = pd.to_datetime(df["Timestamp"])
         df["Timestamp"] = df["Timestamp"].dt.tz_convert("Asia/Kolkata").dt.strftime("%d/%m/%y %H:%M")
 
-        df["Name"] = df["User"].map(lambda x: User.objects.get(email=x).get_full_name())
+        df["Name"] = df["User"].map(get_user_full_name)
         df["User"] = df["Name"] + "\n" + df["User"]
         df = df.drop("Name",axis=1)
 
@@ -84,7 +90,7 @@ def graded_assessment_log(req):
         df["Timestamp"]  = pd.to_datetime(df["Timestamp"])
         df["Timestamp"] = df["Timestamp"].dt.tz_convert("Asia/Kolkata").dt.strftime("%d/%m/%y %H:%M")
 
-        df["Name"] = df["User"].map(lambda x: User.objects.get(email=x).get_full_name())
+        df["Name"] = df["User"].map(get_user_full_name)
         df["User"] = df["Name"] + "\n" + df["User"]
         df = df.drop("Name",axis=1)
 
@@ -136,7 +142,7 @@ def assessment_log(req):
         df["Timestamp"]  = pd.to_datetime(df["Timestamp"])
         df["Timestamp"] = df["Timestamp"].dt.tz_convert("Asia/Kolkata").dt.strftime("%d/%m/%y %H:%M")
 
-        df["Name"] = df["User"].map(lambda x: User.objects.get(email=x).get_full_name())
+        df["Name"] = df["User"].map(get_user_full_name)
         df["User"] = df["Name"] + "\n" + df["User"]
         df = df.drop("Name",axis=1)
 
@@ -242,9 +248,6 @@ def subject_exam_division_plots(req):
 def intermediate_result(req):
     if req.method == 'POST':
             division = req.POST.get("division")
-            ff = req.POST.get("format")
-
-            print("File Format: " + ff)
             file_path = generate_intermediate_result(division)
             return JsonResponse({"filePath":file_path}, status=200)
 
@@ -269,10 +272,13 @@ def student_performance(req):
      df = df.dropna()
      if len(df) == 0:
          return render(req,"dashboard/student_performance.html",{"show":False})
+     df["Marks"] = df["Marks"].map(int)
      avg=df.groupby("id")["Marks"].mean()
      df=df.join(avg,on="id",rsuffix="_avg")
      df["diff"] = (df["Marks"]-df["Marks_avg"]).abs()
      alert=df[(df["diff"]>2) & (df["Marks"] < df["Marks_avg"])]
+     if len(alert) == 0:
+         return render(req,"dashboard/student_performance.html",{"show":False})
      alert["student"]=alert["id"].map(get_student_info)
      alert[["Division","Roll","Name"]] = alert["student"].str.split(",",expand=True)
      alert.drop(["student","diff","id"],inplace=True,axis=1)

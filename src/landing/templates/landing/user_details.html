@@ -1,4 +1,5 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -17,14 +18,23 @@
 
      <main role="main" class="container">
          <h1> User Details </h1>
+
          <div class="row">
              <table class="table table-bordered table-striped">
+                 <tr>
+                     <th>
+                          Username
+                     </th>
+                     <td>
+                         {{ user.username }}
+                     </td>
+                 </tr>
                  <tr>
                      <th>
                           Email
                      </th>
                      <td>
-                         {{ user.email }}
+                          <input class = "form-control" type="text" id="email" value="{{user.email}}">
                      </td>
                  </tr>
                  <tr>
@@ -32,7 +42,7 @@
                           First Name
                      </th>
                      <td>
-                         <input class = "form-control" type="text" id="fn">
+                         <input class = "form-control" type="text" id="fn" value="{{user.first_name}}">
                      </td>
                  </tr>
                  <tr>
@@ -40,7 +50,7 @@
                           Last Name
                      </th>
                      <td>
-                         <input class = "form-control" type="text" id="ln">
+                         <input class = "form-control" type="text" id="ln" value="{{user.last_name}}">
                      </td>
                  </tr>
                  <tr>
@@ -105,11 +115,13 @@
          function enterDetails(){
              var fn = document.getElementById("fn").value.trim()
              var ln = document.getElementById("ln").value.trim()
+             var email = document.getElementById("email").value.trim()
 
              var data = {
                  "user": {{ user.id }},
                  "fn":fn,
-                 "ln":ln
+                 "ln":ln,
+                 "email":email
              }
 
              $.ajax({

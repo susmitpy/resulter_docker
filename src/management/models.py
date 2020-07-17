@@ -14,7 +14,7 @@ class Division(models.Model):
     def __str__(self):
         return self.name
 
-division_list = [('', '')]
+division_list = []
 try:
     division_list.extend([(i[0],i[0])
         for i in Division.objects.values_list('name')])

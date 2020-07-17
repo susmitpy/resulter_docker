@@ -11,8 +11,8 @@ from django import forms
 from management.models import Division, Subject
 from django.db.utils import OperationalError
 
-division_list = [('', '')]
-subject_list = [('', '')]
+division_list = []
+subject_list = []
 
 try:
     division_list.extend([(i[0],i[0])

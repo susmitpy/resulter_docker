@@ -1,4 +1,4 @@
-from management.models import Student, Assessment
+from management.models import Student, Assessment,PT_EVS_Assessment
 
 import pandas as pd
 from numpy import where as np_where
@@ -6,7 +6,7 @@ from numpy import ceil
 from numpy import round
 from numpy import zeros
 
-from django.db.models import Max
+from django.db.models import Max, Sum
 
 from jinja2 import Environment, FileSystemLoader
 from django.core.files.storage import default_storage
@@ -15,7 +15,7 @@ import tempfile
 
 def apply_grace_marks(df,ld=False,sports=False,sports_marks=0):
 
-    if df["%"].min() < 25:
+    if df["%"].min() < 25 and not ld:
         return {"status":"FAIL",
                 "df":df,
                 "ld":ld,
@@ -138,10 +138,26 @@ def color_sub_perc(cell):
         return "color: #f20c0c"
     return ""
 
+def get_pt_grade(marks):
+    if marks >= 60:
+        return "A"
+    elif marks >= 45:
+        return "B"
+    elif marks >= 35:
+        return "C"
+    elif marks >= 0:
+        return "D"
+    else:
+        return "H"
+
 # DB CHECK PASS
 def generate_intermediate_result(division):
-    students = Student.objects.filter(division=division).exclude(vacant = False)
+    students = Student.objects.filter(division=division).exclude(vacant = True)
     results = []
+    # Temporary
+    student = Student.objects.first()
+    students = [student]
+    #####
     for index, student in enumerate(students):
         ass = Assessment.objects.filter(student=student).values("exam__name","exam__subject__name","marks","note")
         df = pd.DataFrame(ass)
@@ -168,6 +184,7 @@ def generate_intermediate_result(division):
                   for e in ["unit_one","terminal","unit_two","final"]:
                      row.append(sub_data[sub_data["exam"]==e].marks.values[0])
                   data.append(row)
+
         df=pd.DataFrame(data,columns=["Subject","Unit 1","Terminal","Unit 2","Final"]).set_index("Subject")
 
         df["Total"] = df.apply(get_sub_total,axis=1)
@@ -194,18 +211,37 @@ def generate_intermediate_result(division):
             if len(uni) == 1 and uni[0] == 0:
                 df.drop("Grace Marks",axis=1,inplace=True)
 
-
         df.index.name=None
         total_marks = int(ceil(df.Total / 2).sum())
+
+        # Add EVS
+        evs_marks = PT_EVS_Assessment.objects.filter(student=student,exam__subject="EVS").aggregate(Sum("marks"))["marks__sum"]
+        df=df.append(pd.Series({},name="EVS",dtype=int))
+        df.loc["EVS","%"]=evs_marks
+        df = df.fillna("")
+
+        total_marks += evs_marks
+
+        exam_conducted_of_marks = (len(df)-1)*100
+        exam_conducted_of_marks += 50
+
         if sports:
             marks = " ".join([str(total_marks),"+",str(sports_remain_marks)])
-            final_perc = round((total_marks + sports_remain_marks)/len(df),2)
+            final_perc = round((total_marks + sports_remain_marks)/exam_conducted_of_marks,2) # CHECK, Round UP or Round Down
         else:
             marks = total_marks
-            final_perc = round(total_marks/len(df),2)
+            final_perc = round(total_marks/exam_conducted_of_marks,2)
+
+        final_perc *= 100
+
+        # PT Grade
+        pt_marks = PT_EVS_Assessment.objects.filter(student=student,exam__subject="PT").aggregate(Sum("marks"))["marks__sum"]
+        pt_grade = get_pt_grade(pt_marks)
 
         non_int_color_cols = ["Unit 1","Terminal","Unit 2","Final"]
-        html =df.style.applymap(color_cell,subset=non_int_color_cols).applymap(color_sub_perc,subset=["%"]).set_table_attributes("class='dataframe mystyle'").set_precision(2).render()
+        subjects = list(df.index)
+        subjects.remove("EVS")
+        html =df.style.applymap(color_cell,subset=(subjects,non_int_color_cols)).applymap(color_sub_perc,subset=(subjects,["%"])).set_table_attributes("class='dataframe mystyle'").set_precision(2).render()
 
         env = Environment(loader=FileSystemLoader('./result'))
         template = env.get_template("student_result.html")
@@ -219,7 +255,8 @@ def generate_intermediate_result(division):
                          "status":status,
                          "sports_remain_marks":sports_remain_marks,
                          "sports" : sports,
-                         "ld" : ld
+                         "ld" : ld,
+                         "pt_grade": pt_grade
                         }
 
         html_out = template.render(template_vars)
@@ -228,22 +265,11 @@ def generate_intermediate_result(division):
         f = tempfile.TemporaryFile(mode="w+")
         f.write(html_out)
         default_storage.save(fp, f)
+        print(fp)
 
-        result_map = {
-            "id" : index,
-            "name" : student.name,
-            "roll" : student.roll_num,
-            "division" : division,
-            "marks": marks,
-            "final_perc" : final_perc,
-            "result":html,
-            "status":status,
-            "sports_remain_marks":sports_remain_marks,
-            "sports" : sports,
-            "ld" : ld
-        }
+        template_vars["id"] = index
 
-        results.append(result_map)
+        results.append(template_vars)
 
     env = Environment(loader=FileSystemLoader('./result'))
     template = env.get_template("inter_result.html")
