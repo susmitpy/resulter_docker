@@ -17,6 +17,7 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
 
+from django.contrib.sites.models import Site
 from django.contrib.auth.forms import PasswordResetForm,UserChangeForm
 
 from .forms import EmailFieldForm
@@ -83,7 +84,7 @@ class ManageUsers(View):
 
     def add_user(self,data,req):
         email = data["email"]
-      #  username = email.split("@")[0]
+
         user = User.objects.create(username=email,email=email)
         g = Group.objects.get(name=data["group"])
         user.groups.add(g)
@@ -91,10 +92,15 @@ class ManageUsers(View):
             user.is_staff = True
 
         user.save()
+        current_site = Site.objects.get_current()
+
+        domain = current_site.domain
+
 
         form = PasswordResetForm({'email': user.email})
         form.is_valid()
         form.save(
+                extra_email_context={"dom":domain},
                 request= req,
                 from_email="weareresulter@gmail.com",
                     email_template_name='registration/html_password_reset_email.html',

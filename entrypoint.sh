@@ -9,6 +9,7 @@ echo "Apply database migrations"
 python manage.py makemigrations
 python manage.py migrate
 python manage.py initadmin
+python manage.py site_config
 
 # Start server
 echo "Starting server"
