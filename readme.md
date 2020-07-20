@@ -2,7 +2,7 @@
 
 ## Name : Resulter
 ## Type : Web Application
-## Development Technologies Used: Django
+## Development Technologies: Django
 ## Deployment Technologies: Docker (Django, Ngnix containers), tested deployment on AWS EC2
 ## Features
 1. Web Portal for quick and easy access
