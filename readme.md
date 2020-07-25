@@ -14,3 +14,6 @@
 7. Color Coded Result
 8. Easy to read and change Grace Marks algorithm
 9. Public Portal for Result Publication
+
+> [View Tutorial Playlist on youtube](https://www.youtube.com/playlist?list=PLuMtS1IwgTIRji67XOBiEitaAnvR_qA4k)
+
