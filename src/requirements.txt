@@ -3,4 +3,4 @@ psycopg2-binary>=2.8
 pandas<=1.0.4
 django-crispy-forms==1.9.1
 plotly==4.8.2
-Jinja2==2.11.2
+Jinja2==2.11.3
